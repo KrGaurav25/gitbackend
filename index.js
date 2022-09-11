@@ -38,6 +38,7 @@ app.use("/postJobs",postJobs)
 app.use("/apply",apply)
 app.use("/saved",saved)
 app.use("/user",userRouter)
+app.use("/download", require("./routes/downloadResume"));
 // app.use("/delete",deletesaved)
 
 
