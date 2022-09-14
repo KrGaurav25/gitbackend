@@ -68,6 +68,25 @@ router.get('/:id',(req,res,next)=>{
     console.log("aaaaaaaaaaaaaaaa");
     // res.json({})
 })
+
+
+router.post('/updateEducation',(req,res,next)=>{
+    console.log("req.body update education",req.body);
+    UserProfile.findOneAndUpdate({userId:req.body.id},
+        {
+      
+        education:req.body.initialEducation,
+
+        })
+        .then((result2)=>{
+            console.log(".......hello.......",result2) 
+            return res.status(200).json({msg:"hello"});})
+        .catch((err)=>{console.log("........errr..........",err)
+        return res.status(500).json({msg:"error"});})
+    // res.status(200).json({msg:"msg"})
+})
+
+
 router.post('/',(req,res,next)=>{
     // we can use find one
     console.log("profile router");
@@ -89,7 +108,7 @@ router.post('/',(req,res,next)=>{
                     }
                     else{
                         console.log("else in profile");
-                        console.log("user",user1);
+                        // console.log("user",user1);
                         return res.status(200).json({
                             message:"Profile Successfull",
                             // token:token,
@@ -109,7 +128,7 @@ router.post('/',(req,res,next)=>{
             }
             else{
                 console.log("else in profile");
-                console.log("user",user);
+                // console.log("user",user);
                 return res.status(200).json({
                     message:"Profile Successfull",
                     // token:token,
@@ -162,15 +181,28 @@ router.post('/update',upload.single('profile'),async(req,res)=>{
     //   console.log("req",req); 
       console.log("hello from post",req.body);
       console.log('h = ',req.file);
-      console.log("............................");
-    //   console.log("body = ",req.body);
-      await UserProfile.find({userId:req.body.id})
+      console.log("............................"); 
+    //   console.log("body = ",req.body); 
+      await UserProfile.find({userId:req.body.id}) 
       .exec()
-      .then((result1)=>{
-        console.log("profile update then");
+      .then((result1)=>{ 
+        console.log("profile update then");  
         Cloudinary.v2.uploader.upload(req.file.path,async function(err,result){
-        if(result1.length>0){
+        if(result1.length>0){ 
             console.log("already exists - if");
+            console.log("skill",req.body.skills.split(','));
+            // console.log("skill",req.body.education);
+        
+            const allSkills = req.body.skills.split(',');
+            // console.log("ed",req.body.education.length);
+            // for(var i = 0;i<req.body.education.length;i++){
+            //     console.log(" value = ",req.body.education[i]);
+            // }
+            // console.log("skills",req.body.skills);
+            // console.log(typeof(req.body.education));
+            // let k =  JSON.parse(req.body.education);
+            // console.log("k = ",k);
+            // console.log("..",(JSON.stringify(k)));
             // const UpdateProfile = await find
             UserProfile.findOneAndUpdate({userId:req.body.id},
             {
@@ -186,11 +218,13 @@ router.post('/update',upload.single('profile'),async(req,res)=>{
             userId:req.body.id,
                name:req.body.name,
                phone:req.body.phone,
-               education:[{'institutionName':'Gl','startYear':2022,'endYear':2032}],
-               skills:['default'],
+                //   education:[{'institutionName':'Gl','startYear':2022,'endYear':2032}],
+            // education:req.body.education,
+            //    skills:['default'],
+            skills:allSkills,
                 rating:3,
                 profile:result.url,
-               resume:'temp'
+               resume:'temp' 
             })
             .then((result2)=>{
                 console.log("res 2",result2) 
@@ -198,19 +232,22 @@ router.post('/update',upload.single('profile'),async(req,res)=>{
             .catch((err)=>{console.log("err 5",err)
             return res.status(500).json({msg:"error"});})
 
-
+ 
             console.log("if ends already exist");
         }
         else{
-            console.log("new profile - else");
+            const allSkills = req.body.skills.split(',');
+            console.log("new profile - else",req.body);
             // console.log("result = ",result);
             const newProfile = new UserProfile({
                _id : new mongoose.Types.ObjectId(),
-               userId:req.body.id,
+               userId:req.body.id,  
                name:req.body.name,
                phone:req.body.phone,
-               education:[{'institutionName':'Gl','startYear':2022,'endYear':2032}],
-               skills:['default'],
+            //    education:[{'institutionName':'Gl','startYear':2022,'endYear':2032}],
+            // education:req.body.education,
+            //    skills:['default'],
+            skills:allSkills, 
                 rating:3,
                 profile:result.url,
                resume:'temp'
@@ -229,7 +266,7 @@ router.post('/update',upload.single('profile'),async(req,res)=>{
                    // res.send(dish);
                })
                .catch(err=> {
-                   console.log("Error in saving");
+                   console.log("Error in saving",err);
                    res.status(500).json({error : err});
                    });
         }

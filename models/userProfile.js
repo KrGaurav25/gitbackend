@@ -16,6 +16,9 @@ let userProfileSchema = new mongoose.Schema(
       type:Number,
       required:true
     },
+    // education:[
+    //   String
+    // ],
     education: [
       {
         institutionName: {
